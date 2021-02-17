@@ -1,38 +1,58 @@
 package main
 
 import (
-    "fmt"
-    "github.com/docopt/docopt-go"
+	"fmt"
+
+	"github.com/docopt/docopt-go"
 )
 
 func add(url string) {
-    fmt.Println("add()")
+	fmt.Println("add()")
+	fmt.Println(url)
+}
+
+func list() {
+	fmt.Println("list()")
+}
+
+func poll() {
+	fmt.Println("poll()")
+}
+
+func remove(id int) {
+	fmt.Println("remove()")
+	fmt.Println(id)
 }
 
 func main() {
-    usage := `rss2email
-
-Usage:
+	usage := `Usage:
   rs add <url>
   rs list
   rs poll
   rs remove <id>`
 
-    args, _ := docopt.ParseDoc(usage)
-    var opts struct {
-        Add bool
-        List bool
-        Poll bool
-        Remove bool
-        Url string `docopt:"url"`
-        Id int
-    };
-    args.Bind(&opts);
+	opts, _ := docopt.ParseDoc(usage)
+	var conf struct {
+		Add    bool
+		List   bool
+		Poll   bool
+		Remove bool
+		URL    string `docopt:"<url>"`
+		ID     int    `docopt:"<id>"`
+	}
+	var error = opts.Bind(&conf)
+	if error != nil {
+		fmt.Println(error)
+		return
+	}
 
-    fmt.Println(opts);
-    fmt.Println(args);
-
-    if (opts.Add) {
-        add(opts.Url);
-    }
+	if conf.Add {
+		add(conf.URL)
+	} else if conf.List {
+		list()
+	} else if conf.Poll {
+		poll()
+	} else if conf.Remove {
+		remove(conf.ID)
+	}
 }
